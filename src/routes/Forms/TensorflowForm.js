@@ -1,16 +1,16 @@
 import React, { PureComponent } from 'react';
-import { Card, Button, Form, Switch, Col, Row, DatePicker, TimePicker, Input, Select, Slider,Radio } from 'antd';
-import { connect } from 'dva';
+import { Card, Button, Form, Switch, Col, Row, Input, Slider,Radio } from 'antd';
 import FooterToolbar from '../../components/FooterToolbar';
 import styles from './style.less';
 const RadioGroup = Radio.Group;
-const { Option } = Select;
-const { RangePicker } = DatePicker;
+
 const marks = {
-  0: '0M',
+  0: '0G',
   1024: '1G',
   2048: '2G',
   4096: '4G',
+  6144: '6G',
+  8182: '8G',
   10240:'10G'};
 const fieldLabels = {
   name: '仓库名',
@@ -41,6 +41,8 @@ const formItemLayout = {
 export default  class AdvancedForm extends PureComponent {
   state = {
     cpu: 1,
+    gpu:1,
+    gpuopen:true
   }
   validate = () => {
 
@@ -50,11 +52,40 @@ export default  class AdvancedForm extends PureComponent {
       cpu: e.target.value,
     });
   }
-  onChangeGPU = () => {
+  onChangeGPU = (e) => {
+    this.setState({
+      gpu: e.target.value,
+    });
+  }
+  onOpenGPU = (e) => {
+    if(e){
+      this.setState({
+        gpuopen:false
+      })
+    }
+    if(!e){
+      this.setState({
+        gpuopen:true
+      })
+    }
 
+   console.log(e)
   }
 
   render() {
+    open = this.state.gpuopen?null:<Row gutter={16} type="flex" justify="space-around" align="middle">
+      <Col lg={12} md={20} sm={24}>
+        <Form.Item {...formItemLayout}
+                   label="GPU核数">
+          <RadioGroup onChange={this.onChangeGPU} value={this.state.gpu}>
+            <Radio value={1}>1核</Radio>
+            <Radio value={2}>2核</Radio>
+            <Radio value={3}>3核</Radio>
+            <Radio value={4}>4核</Radio>
+          </RadioGroup>
+        </Form.Item>
+      </Col>
+    </Row>
     return (
       <div>
         <Card title="Tensorflow 应用创建" className={styles.card} bordered={false}>
@@ -83,71 +114,24 @@ export default  class AdvancedForm extends PureComponent {
             <Row gutter={16} type="flex" justify="space-around" align="middle">
               <Col lg={12} md={20} sm={24}>
                 <Form.Item {...formItemLayout}
-                           label="GPU">
-                  <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked={false} onChange={this.onChangeGPU} />
+                           label="启用GPU">
+                  <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked={false} onChange={this.onOpenGPU} />
                 </Form.Item>
               </Col>
             </Row>
+            {open}
             <Row gutter={16} type="flex" justify="space-around" align="middle">
               <Col lg={12} md={20} sm={24}>
                 <Form.Item {...formItemLayout}
                            label="内存配额">
-                  <Slider max={10240} marks={marks} defaultValue={0} />
+                  <Slider max={10240} marks={marks} defaultValue={1024} />
                 </Form.Item>
               </Col>
             </Row>
           </Form>
         </Card>
-        <Card title="任务管理" className={styles.card} bordered={false}>
-          <Form layout="vertical" hideRequiredMark>
-            <Row gutter={16}>
-              <Col lg={6} md={12} sm={24}>
-                <Form.Item label={fieldLabels.name2}>
-                    <Input placeholder="请输入" />
-                </Form.Item>
-              </Col>
-              <Col xl={{ span: 6, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
-                <Form.Item label={fieldLabels.url2}>
-                    <Input placeholder="请输入" />
-                </Form.Item>
-              </Col>
-              <Col xl={{ span: 8, offset: 2 }} lg={{ span: 10 }} md={{ span: 24 }} sm={24}>
-                <Form.Item label={fieldLabels.owner2}>
-                    <Select placeholder="请选择管理员">
-                      <Option value="xiao">付晓晓</Option>
-                      <Option value="mao">周毛毛</Option>
-                    </Select>
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={16}>
-              <Col lg={6} md={12} sm={24}>
-                <Form.Item label={fieldLabels.approver2}>
-                    <Select placeholder="请选择审批员">
-                      <Option value="xiao">付晓晓</Option>
-                      <Option value="mao">周毛毛</Option>
-                    </Select>
-                </Form.Item>
-              </Col>
-              <Col xl={{ span: 6, offset: 2 }} lg={{ span: 8 }} md={{ span: 12 }} sm={24}>
-                <Form.Item label={fieldLabels.dateRange2}>
-                    <TimePicker
-                      placeholder="提醒时间"
-                      style={{ width: '100%' }}
-                      getPopupContainer={trigger => trigger.parentNode}
-                    />
-                </Form.Item>
-              </Col>
-              <Col xl={{ span: 8, offset: 2 }} lg={{ span: 10 }} md={{ span: 24 }} sm={24}>
-                <Form.Item label={fieldLabels.type2}>
-                    <Select placeholder="请选择仓库类型">
-                      <Option value="private">私密</Option>
-                      <Option value="public">公开</Option>
-                    </Select>
-                </Form.Item>
-              </Col>
-            </Row>
-          </Form>
+        <Card title="应用说明" className={styles.card} bordered={false}>
+          <p>jupyter 默认密码 jupyter</p>
         </Card>
         <FooterToolbar>
 

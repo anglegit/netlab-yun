@@ -28,9 +28,9 @@ export const getNavData = app => [
         component: dynamicWrapper(app, [], import('../routes/List/instancelist')),
       },
       {
-        name: '表单页',
+        name: '',
         path: 'form',
-        icon: 'form',
+        icon: '',
         children: [
           {
             name: '基础表单',
